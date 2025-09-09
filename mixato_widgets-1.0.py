@@ -60,7 +60,8 @@ class MixatoWidgetsApp:
             if (self.Calendario):
                 self.Texto_Calendario.set(value=Calendario_Vertical)
 
-        self.Actualizar_Variables()      
+        self.Actualizar_Variables()
+            
             
     def Actualizar_Variables(self):
         if (self.Hora):
@@ -74,6 +75,7 @@ class MixatoWidgetsApp:
             os.execl(sys.executable, sys.executable, *sys.argv)
         self.Frame_Principal.after(self.RefreshMili, self.Actualizar_Variables)
         self.Aplicar_Config()
+        self.Revisar_Cierre()
 
     def Cargar_Configuración(self):
         # Configuración default
@@ -428,6 +430,14 @@ class MixatoWidgetsApp:
             Archivo_Reload.write('False')
         os.execl(sys.executable, sys.executable, *sys.argv)
            
+    def Revisar_Cierre(self):
+        with open('cerrar.txt', encoding='utf-8') as cerrar_txt:
+            for linea in cerrar_txt:
+                if linea.startswith('False'):
+                    return
+        with open('cerrar.txt', 'w') as cerrar_txt:
+            cerrar_txt.write('False')
+        os._exit(0)
 
 if __name__ == "__main__":
     root = Tk()

@@ -543,12 +543,13 @@ class MixatoWidgetsConf:
 
     def Marco_Final(self, fila, columna):
         self.Frame_Final = customtkinter.CTkFrame(self.root)
-        self.Frame_Final.grid(row=fila, column=columna, columnspan=4)
+        self.Frame_Final.grid(row=fila, column=columna, columnspan=5)
         boton_guardar = customtkinter.CTkButton(self.Frame_Final, text="Guardar", command=self.Guardar_Configuración)
         boton_guardar.grid(row=0, column=1, padx=5, pady=5)
-        #boton_Cancelar = customtkinter.CTkButton(self.Frame_Final, text="Cancelar", command= lambda : os._exit(0))
         boton_Mensajes = customtkinter.CTkButton(self.Frame_Final, text="Abrir Mensajes", command= self.Lanzar_txt)
         boton_Mensajes.grid(row=0, column=2, padx=5, pady=5)
+        boton_cerrar = customtkinter.CTkButton(self.Frame_Final, text="Cerrar", command=self.Cerrar_Soft)
+        boton_cerrar.grid(row=0, column=3, padx=5, pady=5)
 
     def Generar_Desplegable_bool(self,clave, destino, valores):
         devolver = customtkinter.CTkComboBox(destino, values=valores, state="readonly", command=lambda valor: self.obtener_valor(valor, clave))
@@ -589,6 +590,10 @@ class MixatoWidgetsConf:
     def Lanzar_txt(self):
         script_path = os.path.abspath('messages.txt') # Obtiene la ruta absoluta
         os.startfile(script_path)
+
+    def Cerrar_Soft(self):
+        with open('cerrar.txt','w') as Archivo_Cerrar:
+            Archivo_Cerrar.write('True')
 
 
 
