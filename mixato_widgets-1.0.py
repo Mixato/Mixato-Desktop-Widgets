@@ -33,7 +33,10 @@ class MixatoWidgetsApp:
             Label_Fecha.place(relx=self.Ubicacion_Fecha[0], rely=self.Ubicacion_Fecha[1], anchor=self.Ubicacion_Fecha[2])
             if (self.Incluir_Semana):
                 self.Semana = " [w"+str(self.ahora.isocalendar()[1])+"]"
-            self.Texto_Fecha.set(value=time.strftime("%A, %e de %B")+self.Semana)
+            if (self.Dia_Separado):
+                self.Texto_Fecha.set(value=time.strftime("%e de %B")+self.Semana)
+            else:
+                self.Texto_Fecha.set(value=time.strftime("%A, %e de %B")+self.Semana)
             if (self.Mensaje_del_Dia):
                 self.Texto_Fecha.set(value=self.Mensaje_Dia)
             
@@ -59,6 +62,18 @@ class MixatoWidgetsApp:
                 Calendario_Vertical = wg.calendario_vertical(self.ahora.year, self.ahora.month, self.Marcar_Dia, self.Dia_Izquierda, self.Dia_Derecha)
             if (self.Calendario):
                 self.Texto_Calendario.set(value=Calendario_Vertical)
+        
+        # Widget Día de la semana
+        if (self.Dia_Separado):
+            dia_con_acento = time.strftime("%A").upper()
+            dia_sin_acento = dia_con_acento.replace("É", "E").replace("Á", "A")
+            if (self.Letra_Dia_Separado == "Anurati"):
+                dia_sin_acento = dia_sin_acento.replace("VI","V I").replace("IE","I E")
+            self.Dia_Semana = StringVar()
+            self.Dia_Semana.set(value=dia_sin_acento)
+            Label_Dia_Semana = Label(self.Frame_Principal, textvariable=self.Dia_Semana, fg=self.Color_Dia_Separado, bg=self.transparente, font=(self.Letra_Dia_Separado, self.Tamannio_Dia_Separado))
+            Label_Dia_Semana.place(relx=self.Ubicacion_Dia_Separado[0], rely=self.Ubicacion_Dia_Separado[1], anchor=self.Ubicacion_Dia_Separado[2])
+
 
         self.Actualizar_Variables()
             
@@ -129,6 +144,11 @@ class MixatoWidgetsApp:
         self.lista_dias = []
         self.lista_mensajes = []
         self.Cruce_Monitor = False
+        self.Dia_Separado = False
+        self.Ubicacion_Dia_Separado = [0.5,0.02,"n"] # Formato: relx=0.98,rely=0.02,anchor="ne" Ejemplo: [0.98,0.02,"ne"]
+        self.Letra_Dia_Separado = "Anurati"
+        self.Tamannio_Dia_Separado = 60
+        self.Color_Dia_Separado = "#FFFFFF"
 
         # Levanto configuración de config.ini
         # Anulo el color #000001 por cuestiones de funcionamiento, ya que no mostrará diferencias perceptibles con el #000000
@@ -311,6 +331,28 @@ class MixatoWidgetsApp:
             pass
         try:
             self.Dia_Izquierda = config.get("Widgets","Dia_Izquierda")
+        except Exception:
+            pass
+        try:
+            self.Dia_Separado = config.get("Widgets","Dia_Separado")
+        except Exception:
+            pass
+        try:
+            self.Ubicacion_Dia_Separado =  [config.getfloat("Widgets","Ubicacion_Dia_Separado_relx"),config.getfloat("Widgets","Ubicacion_Dia_Separado_rely"),config.get("Widgets","Ubicacion_Dia_Separado_anchor")]
+        except Exception:
+            pass
+        try:
+            self.Color_Dia_Separado = config.get("Widgets","Color_Dia_Separado")
+            if self.Color_Dia_Separado == "#000001":
+                self.Color_Dia_Separado = "#000000"
+        except Exception:
+            pass
+        try:
+            self.Letra_Dia_Separado = config.get("Widgets","Letra_Dia_Separado")
+        except Exception:
+            pass
+        try:
+            self.Tamannio_Dia_Separado = config.getint("Widgets","Tamannio_Dia_Separado")
         except Exception:
             pass
         try:
