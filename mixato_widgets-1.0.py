@@ -68,7 +68,7 @@ class MixatoWidgetsApp:
             dia_con_acento = time.strftime("%A").upper()
             dia_sin_acento = dia_con_acento.replace("É", "E").replace("Á", "A")
             if (self.Letra_Dia_Separado == "Anurati"):
-                dia_sin_acento = dia_sin_acento.replace("VI","V I").replace("IE","I E")
+                dia_sin_acento = dia_sin_acento.replace("VI","V I").replace("IE","I E").replace("IN","I N")
             self.Dia_Semana = StringVar()
             self.Dia_Semana.set(value=dia_sin_acento)
             Label_Dia_Semana = Label(self.Frame_Principal, textvariable=self.Dia_Semana, fg=self.Color_Dia_Separado, bg=self.transparente, font=(self.Letra_Dia_Separado, self.Tamannio_Dia_Separado))
