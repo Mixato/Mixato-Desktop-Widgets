@@ -334,7 +334,7 @@ class MixatoWidgetsApp:
         except Exception:
             pass
         try:
-            self.Dia_Separado = config.get("Widgets","Dia_Separado")
+            self.Dia_Separado = config.getboolean("Widgets","Dia_Separado")
         except Exception:
             pass
         try:

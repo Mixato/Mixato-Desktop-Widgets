@@ -13,7 +13,7 @@ class MixatoWidgetsConf:
         self.root = root
         self.root.title("Mixato Widgets - Preferencias")
         self.root.iconbitmap("transparente.ico")
-        self.root.resizable(False,False)
+        self.root.resizable(True,True)
         if len(sys.argv) == 2:
             self.root.geometry(sys.argv[1])
         self.Cargar_Configuración()
@@ -71,6 +71,10 @@ class MixatoWidgetsConf:
         self.ConfigDic["Mensaje_del_Dia"] = False
         self.ConfigDic["lista_dias"] = []
         self.ConfigDic["lista_mensajes"] = []
+        self.ConfigDic["Dia_Separado"] = False
+        self.ConfigDic["Ubicacion_Dia_Separado"] = [0.5,0.02,"n"] # Formato: relx=0.98,rely=0.02,anchor="ne" Ejemplo: [0.98,0.02,"ne"]
+        self.ConfigDic["Letra_Dia_Separado"] = "Anurati"
+        self.ConfigDic["Tamannio_Dia_Separado"] = 60
         self.ConfigDic["Cruce_Monitor"] = False
 
         # Levanto configuración de config.ini
@@ -266,6 +270,28 @@ class MixatoWidgetsConf:
         except Exception:
             pass
         try:
+            self.ConfigDic["Dia_Separado"] = self.config.getboolean("Widgets","Dia_Separado")
+        except Exception:
+            pass
+        try:
+            self.ConfigDic["Ubicacion_Dia_Separado"] =  [self.config.getfloat("Widgets","Ubicacion_Dia_Separado_relx"),self.config.getfloat("Widgets","Ubicacion_Dia_Separado_rely"),self.config.get("Widgets","Ubicacion_Dia_Separado_anchor")]
+        except Exception:
+            pass
+        try:
+            self.ConfigDic["Color_Dia_Separado"] = self.config.get("Widgets","Color_Dia_Separado")
+            if self.ConfigDic["Color_Dia_Separado"] == "#000001":
+                self.ConfigDic["Color_Dia_Separado"] = "#000000"
+        except Exception:
+            pass
+        try:
+            self.ConfigDic["Letra_Dia_Separado"] = self.config.get("Widgets","Letra_Dia_Separado")
+        except Exception:
+            pass
+        try:
+            self.ConfigDic["Tamannio_Dia_Separado"] = self.config.getint("Widgets","Tamannio_Dia_Separado")
+        except Exception:
+            pass
+        try:
             with open("cruce.set", encoding="utf-8") as Archivo_Cruce:
                 for linea in Archivo_Cruce:
                     if linea.startswith('True'):
@@ -297,7 +323,10 @@ class MixatoWidgetsConf:
         self.ConfigDic["Ubicacion_Mensajes2_anchor"] = self.ConfigDic["Ubicacion_Mensajes2"][2]
         self.ConfigDic["Ubicacion_Calendario_relx"] = self.ConfigDic["Ubicacion_Calendario"][0]
         self.ConfigDic["Ubicacion_Calendario_rely"] = self.ConfigDic["Ubicacion_Calendario"][1]
-        self.ConfigDic["Ubicacion_Calendario_anchor"] = self.ConfigDic["Ubicacion_Calendario"][2]    
+        self.ConfigDic["Ubicacion_Calendario_anchor"] = self.ConfigDic["Ubicacion_Calendario"][2]
+        self.ConfigDic["Ubicacion_Dia_Separado_relx"] = self.ConfigDic["Ubicacion_Dia_Separado"][0]
+        self.ConfigDic["Ubicacion_Dia_Separado_rely"] = self.ConfigDic["Ubicacion_Dia_Separado"][1]
+        self.ConfigDic["Ubicacion_Dia_Separado_anchor"] = self.ConfigDic["Ubicacion_Dia_Separado"][2]     
 
     def Configurar_Ventana(self):
         self.tipos_letra = tkinter.font.families()
@@ -310,7 +339,7 @@ class MixatoWidgetsConf:
         self.tabview.add("Fecha y Hora")
         self.Marco_Hora(1,0)
         self.Marco_Fecha(1,1)
-        self.tabview.add("Calendario")
+        self.tabview.add("Calendario y Día")
         self.Marco_Calendario(2,0)
         self.tabview.add("Mensajes")
         self.Marco_Mensajes(3,0)
@@ -426,7 +455,7 @@ class MixatoWidgetsConf:
         self.Desplegable_Mostrar_Anteayer.grid(row=8, column=1, padx=5, pady=5)
 
     def Marco_Calendario(self, fila, columna):
-        self.Frame_Calendario = customtkinter.CTkFrame(self.tabview.tab("Calendario"))
+        self.Frame_Calendario = customtkinter.CTkFrame(self.tabview.tab("Calendario y Día"))
         self.Frame_Calendario.grid(row=fila, column=columna, columnspan=6)
         Label_Calendario=customtkinter.CTkLabel(self.Frame_Calendario, text="Mostrar Calendario:")
         Label_Calendario.grid(row=0, column=0, padx=5, pady=5)
@@ -452,30 +481,55 @@ class MixatoWidgetsConf:
         Label_Color_Calendario.grid(row=2, column=2, padx=5, pady=5)
         self.Textos["Color_Calendario"] = self.Generar_Texto("Color_Calendario",self.Frame_Calendario)
         self.Textos["Color_Calendario"].grid(row=2, column=3, padx=5, pady=5)
-        Label_Letra_Calendario=customtkinter.CTkLabel(self.Frame_Calendario, text="Letra Calendario:")
-        Label_Letra_Calendario.grid(row=3, column=0, padx=5, pady=5)
-        self.Desplegable_Letra_Calendario = self.Generar_Desplegable("Letra_Calendario",self.Frame_Calendario, self.tipos_letra)
-        self.Desplegable_Letra_Calendario.grid(row=3, column=1, padx=5, pady=5)
         Label_Tamannio_Calendario=customtkinter.CTkLabel(self.Frame_Calendario, text="Tamaño Calendario:")
         Label_Tamannio_Calendario.grid(row=3, column=2, padx=5, pady=5)
         self.Textos["Tamannio_Calendario"] = self.Generar_Texto("Tamannio_Calendario",self.Frame_Calendario)
         self.Textos["Tamannio_Calendario"].grid(row=3, column=3, padx=5, pady=5)
         Label_Semana_Cal=customtkinter.CTkLabel(self.Frame_Calendario, text="Incluir Semana:")
-        Label_Semana_Cal.grid(row=4, column=0, padx=5, pady=5)
+        Label_Semana_Cal.grid(row=3, column=0, padx=5, pady=5)
         self.Desplegable_Semana_Cal = self.Generar_Desplegable_bool("Incluir_Semana_Cal",self.Frame_Calendario, ["True", "False"])
-        self.Desplegable_Semana_Cal.grid(row=4, column=1, padx=5, pady=5)
+        self.Desplegable_Semana_Cal.grid(row=3, column=1, padx=5, pady=5)
         Label_Marcar_Dia=customtkinter.CTkLabel(self.Frame_Calendario, text="Marcar Día:")
-        Label_Marcar_Dia.grid(row=4, column=2, padx=5, pady=5)
+        Label_Marcar_Dia.grid(row=4, column=0, padx=5, pady=5)
         self.Desplegable_Marcar_Dia = self.Generar_Desplegable_bool("Marcar_Dia",self.Frame_Calendario, ["True", "False"])
-        self.Desplegable_Marcar_Dia.grid(row=4, column=3, padx=5, pady=5)
+        self.Desplegable_Marcar_Dia.grid(row=4, column=1, padx=5, pady=5)
         Label_Dia_Izquierda=customtkinter.CTkLabel(self.Frame_Calendario, text="Marca Día Izquierda:")
-        Label_Dia_Izquierda.grid(row=5, column=0, padx=5, pady=5)
+        Label_Dia_Izquierda.grid(row=4, column=2, padx=5, pady=5)
         self.Textos["Dia_Izquierda"] = self.Generar_Texto("Dia_Izquierda",self.Frame_Calendario)
-        self.Textos["Dia_Izquierda"].grid(row=5, column=1, padx=5, pady=5)
+        self.Textos["Dia_Izquierda"].grid(row=4, column=3, padx=5, pady=5)
         Label_Dia_Derecha=customtkinter.CTkLabel(self.Frame_Calendario, text="Marca Día Derecha:")
         Label_Dia_Derecha.grid(row=5, column=2, padx=5, pady=5)
         self.Textos["Dia_Derecha"] = self.Generar_Texto("Dia_Derecha",self.Frame_Calendario)
         self.Textos["Dia_Derecha"].grid(row=5, column=3, padx=5, pady=5)
+        Label_Dia_Separado=customtkinter.CTkLabel(self.Frame_Calendario, text="Mostrar Día separado:")
+        Label_Dia_Separado.grid(row=5, column=0, padx=5, pady=5)
+        self.Desplegable_Dia_Separado = self.Generar_Desplegable_bool("Dia_Separado",self.Frame_Calendario, ["True", "False"])
+        self.Desplegable_Dia_Separado.grid(row=5, column=1, padx=5, pady=5)
+        Label_Letra_Dia_Separado=customtkinter.CTkLabel(self.Frame_Calendario, text="Letra Día Separado:")
+        Label_Letra_Dia_Separado.grid(row=6, column=0, padx=5, pady=5)
+        self.Desplegable_Letra_Dia_Separado = self.Generar_Desplegable("Letra_Dia_Separado",self.Frame_Calendario, self.tipos_letra)
+        self.Desplegable_Letra_Dia_Separado.grid(row=6, column=1, padx=5, pady=5)
+        Label_Tamannio_Dia_Separado=customtkinter.CTkLabel(self.Frame_Calendario, text="Tamaño Día Separado:")
+        Label_Tamannio_Dia_Separado.grid(row=6, column=2, padx=5, pady=5)
+        self.Textos["Tamannio_Dia_Separado"] = self.Generar_Texto("Tamannio_Dia_Separado",self.Frame_Calendario)
+        self.Textos["Tamannio_Dia_Separado"].grid(row=6, column=3, padx=5, pady=5)
+        Label_relx_Dia_Separado=customtkinter.CTkLabel(self.Frame_Calendario, text="Ubicación Día Separado X:")
+        Label_relx_Dia_Separado.grid(row=7, column=0, padx=5, pady=5)
+        self.Textos["Ubicacion_Dia_Separado_relx"] = self.Generar_Texto("Ubicacion_Dia_Separado_relx",self.Frame_Calendario)
+        self.Textos["Ubicacion_Dia_Separado_relx"].grid(row=7, column=1, padx=5, pady=5)        
+        Label_rely_Dia_Separado=customtkinter.CTkLabel(self.Frame_Calendario, text="Ubicación Día Separado Y:")
+        Label_rely_Dia_Separado.grid(row=7, column=2, padx=5, pady=5)
+        self.Textos["Ubicacion_Dia_Separado_rely"] = self.Generar_Texto("Ubicacion_Dia_Separado_rely",self.Frame_Calendario)
+        self.Textos["Ubicacion_Dia_Separado_rely"].grid(row=7, column=3, padx=5, pady=5)
+        Label_anchor_Dia_Separado=customtkinter.CTkLabel(self.Frame_Calendario, text="Ubicación Día Separado Anchor:")
+        Label_anchor_Dia_Separado.grid(row=8, column=0, padx=5, pady=5)
+        self.Textos["Ubicacion_Dia_Separado_anchor"] = self.Generar_Texto("Ubicacion_Dia_Separado_anchor",self.Frame_Calendario)
+        self.Textos["Ubicacion_Dia_Separado_anchor"].grid(row=8, column=1, padx=5, pady=5)    
+        Label_Color_Dia_Separado=customtkinter.CTkLabel(self.Frame_Calendario, text="Color Día Separado:")
+        Label_Color_Dia_Separado.grid(row=8, column=2, padx=5, pady=5)
+        self.Textos["Color_Dia_Separado"] = self.Generar_Texto("Color_Dia_Separado",self.Frame_Calendario)
+        self.Textos["Color_Dia_Separado"].grid(row=8, column=3, padx=5, pady=5)
+
 
     def Marco_Mensajes(self, fila, columna):
         self.Frame_Mensajes = customtkinter.CTkFrame(self.tabview.tab("Mensajes"))
