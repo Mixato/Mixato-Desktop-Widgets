@@ -1,6 +1,6 @@
 [Widgets]
 
-#Formato archivo config.ini
+#Formato archivo configuración, duplicar éste archivo como config.ini
 # Elegir el monitor, se encuentran alineados de izquierda a derecha, siendo el primero de la izquierda el 0
 Monitor_Widget = 0
 # Usar en caso de querer enviar al monitor de la derecha sin saber la cantidad total de monitores
